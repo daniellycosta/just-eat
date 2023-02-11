@@ -6,10 +6,13 @@ Small project for listing restaurants by UK outcode
 - [How to use](#how-to-use)
   - [Installing dependencies and starting](#install)
 - [Technologies](#technologies)
+- [Answers to technical questions](answers_to_technical_questions.md)
 - [Author](#author)
 - [License](#license)
 
 ## [How to use](#how-to-use)
+
+To use this application, it is necessary to clone and run the API project first. The API project can be accessed by clicking [here](https://github.com/daniellycosta/just-eat-api)
 
 ### [Installing dependencies and starting](#install)
 

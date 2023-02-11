@@ -23,15 +23,14 @@ const HeaderMap = ({ latitude, longitude, displayMarker}: HeaderMapsProps) => {
   return (
     <MapContainer
       style={{ height: "150px", width: "100%", opacity:0.5 }}
-      center={[latitude || 0, longitude || 0]}
+      center={[latitude ?? 0, longitude ?? 0]}
       zoom={15}
       scrollWheelZoom={false}
       zoomControl={false}
       dragging={false}
     >
-      <Map latitude={latitude || 0} longitude={longitude || 0}/>
+      <Map latitude={latitude ?? 0} longitude={longitude ?? 0}/>
       <TileLayer
-        attribution=''
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {displayMarker && <Marker position={[latitude, longitude]}></Marker>}

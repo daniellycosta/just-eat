@@ -29,7 +29,7 @@ function App() {
 
   return (
     <>
-      <Navbar urlOutcode={outcode || ""}/>
+      <Navbar urlOutcode={outcode ?? ""}/>
       <RestaurantPage postcode={postcode} page={page} handleChangePage={handleChangePage}/>
     </>
   )
