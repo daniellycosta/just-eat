@@ -15,3 +15,11 @@ export interface Restaurant {
   };
   CuisineTypes: CuisineType[]
 }
+
+export interface AreaInfo{
+  Area:string,
+  Postcode:string,
+  Latitude:number,
+  Longitude:number,
+  Restaurants:Restaurant[]
+}

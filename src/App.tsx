@@ -23,6 +23,7 @@ function App() {
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number)=>{
     setPage(value);
     navigate(`/${postcode}/page/${value}`)
+    window.scrollTo(0, 0)
   }
 
   return (

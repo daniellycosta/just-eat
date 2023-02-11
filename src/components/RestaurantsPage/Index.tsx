@@ -1,15 +1,17 @@
 import { useState, useEffect, useMemo } from 'react';
 import RestaurantCard from '../../common/RestaurantCard/Index';
+import HeaderMap from '../../common/HeaderMap/Index';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-import { Restaurant } from '../../assets/interfaces';
+import { AreaInfo, Restaurant } from '../../assets/interfaces';
 import { api } from "../../api/index"
 import './style.css'
-import { Pagination } from '@mui/material';
+import { Box, Pagination } from '@mui/material';
+import Header from '../../common/Header/Index';
 
-const ITENS_PER_PAGE = 10
+const ITENS_PER_PAGE = 12
 
 interface RestaurantsPageProps {
   postcode: string,
@@ -17,18 +19,23 @@ interface RestaurantsPageProps {
   page: number
 }
 
-function RestaurantsPage({ postcode, page, handleChangePage }: RestaurantsPageProps) {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+const RestaurantsPage = ({ postcode, page, handleChangePage }: RestaurantsPageProps) => {
+  const [areaInfo, setAreaInfo] = useState<AreaInfo>({} as AreaInfo)
 
   useEffect(() => {
     getRestaurantsByPostCode()
   }, [postcode]);
 
   const getRestaurantsPerPage = (page: number) => {
-    const startIndex = (page - 1) * ITENS_PER_PAGE;
-    const endIndex = startIndex + ITENS_PER_PAGE;
+    if (areaInfo.Restaurants?.length) {
+      const startIndex = (page - 1) * ITENS_PER_PAGE;
+      const endIndex = startIndex + ITENS_PER_PAGE;
 
-    return restaurants.slice(startIndex, endIndex)
+      return areaInfo.Restaurants.slice(startIndex, endIndex)
+    } else {
+      return []
+    }
+
   }
 
   const getRestaurantObjectWithFilteredCuisines = (restaurant: Restaurant) => {
@@ -48,39 +55,59 @@ function RestaurantsPage({ postcode, page, handleChangePage }: RestaurantsPagePr
 
   const getRestaurantsByPostCode = async () => {
     if (!postcode) {
-      setRestaurants([])
+      setAreaInfo({} as AreaInfo)
       return
     }
     const response = await api.get(`/restaurants/bypostcode/${postcode}`)
     const { data } = response
     if (data) {
       const filteredRestaurants = data.Restaurants.filter((rest: Restaurant) => rest.IsOpenNow).map((rest: Restaurant) => getRestaurantObjectWithFilteredCuisines(rest))
-      setRestaurants(filteredRestaurants)
+      setAreaInfo({
+        ...data,
+        Postcode: data.MetaData.Postcode,
+        ResultCount: data.MetaData.ResultCount,
+        Latitude: data.MetaData.Latitude,
+        Longitude: data.MetaData.Longitude,
+        Restaurants: filteredRestaurants
+      })
     } else {
-      setRestaurants([])
+      setAreaInfo({} as AreaInfo)
     }
   }
 
-  const restaurantSlice = useMemo(() => getRestaurantsPerPage(page), [restaurants,page]);
-  const totalPages = Math.ceil(restaurants.length / ITENS_PER_PAGE);
+  const restaurantSlice = useMemo(() => getRestaurantsPerPage(page), [areaInfo.Postcode, page]);
+  const totalPages = Math.ceil(areaInfo?.Restaurants?.length / ITENS_PER_PAGE);
+
   return (
-    <>
-      {!!restaurants.length && <Grid container spacing={2}
-        direction="row"
-        justifyContent="center"
-        alignItems="stretch" style={{ marginTop: "2rem", padding: "2rem 1rem" }}>
-        {
-          restaurantSlice.map(rest => (
-            <Grid item xs={6} md={3} key={rest.Id}>
-              <RestaurantCard restaurant={rest} />
-            </Grid>))
-        }
-      </Grid>}
-      {!restaurants.length && <Paper>
-        <Typography variant='h6'>Empty</Typography>
+    <div style={{ marginTop: "2rem", padding: "2rem 1rem" }}>
+      <Header area={areaInfo.Area} postcode={areaInfo.Postcode} latitude={areaInfo.Latitude} longitude={areaInfo.Longitude} />
+      {!!(areaInfo?.Restaurants?.length) && <>
+        <Grid container spacing={2}
+          direction="row"
+          justifyContent="start"
+          alignItems="stretch">
+          {
+            restaurantSlice.map(rest => (
+              <Grid item xs={6} md={3} key={rest.Id}>
+                <RestaurantCard restaurant={rest} />
+              </Grid>))
+          }
+        </Grid>
+        <Pagination className='pagination' count={totalPages} page={page} onChange={handleChangePage} color="primary" showFirstButton showLastButton />
+      </>}
+      {!(areaInfo?.Restaurants?.length) && <Paper className='not-found'>
+        {!Object.keys(areaInfo)?.length ? (
+          <Typography variant='h6'>Use the search box to find restaurants</Typography>
+        ) : (
+          <>
+            <Typography variant='h6'>No Restaurants Found</Typography>
+            <Typography variant='body1'>Try again with another postcode</Typography>
+          </>
+        )}
+
+
       </Paper>}
-      <Pagination count={totalPages} page={page} onChange={handleChangePage} color="primary" showFirstButton showLastButton />
-    </>
+    </div>
   )
 }
 
