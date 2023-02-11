@@ -21,12 +21,15 @@ interface RestaurantsPageProps {
 
 const RestaurantsPage = ({ postcode, page, handleChangePage }: RestaurantsPageProps) => {
   const [areaInfo, setAreaInfo] = useState<AreaInfo>({} as AreaInfo)
+  const totalPages = Math.ceil(areaInfo?.Restaurants?.length / ITENS_PER_PAGE);
 
   useEffect(() => {
     getRestaurantsByPostCode()
   }, [postcode]);
 
   const getRestaurantsPerPage = (page: number) => {
+    if(page > totalPages) handleChangePage({} as React.ChangeEvent<unknown> , 1)
+
     if (areaInfo.Restaurants?.length) {
       const startIndex = (page - 1) * ITENS_PER_PAGE;
       const endIndex = startIndex + ITENS_PER_PAGE;
@@ -76,7 +79,6 @@ const RestaurantsPage = ({ postcode, page, handleChangePage }: RestaurantsPagePr
   }
 
   const restaurantSlice = useMemo(() => getRestaurantsPerPage(page), [areaInfo.Postcode, page]);
-  const totalPages = Math.ceil(areaInfo?.Restaurants?.length / ITENS_PER_PAGE);
 
   return (
     <div style={{ marginTop: "2rem", padding: "2rem 1rem" }}>
