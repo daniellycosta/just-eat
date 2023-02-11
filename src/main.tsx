@@ -14,6 +14,11 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <ErrorPage/>
   },
+  {
+    path: "/:outcode/page/:pageNumber",
+    element: <App />,
+    errorElement: <ErrorPage/>
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

@@ -5,20 +5,41 @@ import Typography from '@mui/material/Typography';
 
 import { IconButton, InputBase, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import {useNavigate } from 'react-router-dom';
 
-function Navbar() {
+interface NavbarProps{
+  urlOutcode:string,
+}
+
+function Navbar({ urlOutcode}:NavbarProps) {
+  const navigate = useNavigate();
   const [postcode, setPostCode] = useState("")
-  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(()=>{
+    if(urlOutcode){
+      setPostCode(urlOutcode)
+    }
+  },[])
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPostCode(event.target.value)
   }
 
+  const navigateToCurrentPostCode = ()=>{
+    navigate(`/${postcode}/page/1`)
+  }
+
+  const handleKeyDown = (event:React.KeyboardEvent)=>{
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      navigateToCurrentPostCode()
+    }
+  }
+
   const handleClickSearch = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    setSearchParams({ outcode: postcode });
+    navigateToCurrentPostCode()
   }
 
   return (
@@ -37,7 +58,9 @@ function Navbar() {
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search by postcode"
               inputProps={{ 'aria-label': 'search by postcode' }}
+              value={postcode}
               onChange={handleChangeSearch}
+              onKeyDown={handleKeyDown}
             />
             <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleClickSearch}>
               <SearchIcon />
