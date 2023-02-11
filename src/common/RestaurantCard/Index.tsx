@@ -13,7 +13,7 @@ interface Props {
 
 export default function RestaurantCard({ restaurant }: Props) {
   return (
-    <Card className='card'>
+    <Card className='card' data-cy="restaurant-card">
       <CardContent>
         <Box marginBottom="1rem" display="flex" alignItems="center" gap="1rem" justifyContent="space-between">
           <Box display="flex" alignItems="center" justifyContent="start" gap="1rem">

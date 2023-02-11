@@ -1,3 +1,4 @@
+import { Paper } from '@mui/material';
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from './common/Navbar/Index';

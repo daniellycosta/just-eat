@@ -15,7 +15,7 @@ const ITENS_PER_PAGE = 12
 
 interface RestaurantsPageProps {
   postcode: string,
-  handleChangePage: Function
+  handleChangePage(event: React.ChangeEvent<unknown>, value: number):any
   page: number
 }
 
@@ -28,7 +28,7 @@ const RestaurantsPage = ({ postcode, page, handleChangePage }: RestaurantsPagePr
   }, [postcode]);
 
   const getRestaurantsPerPage = (page: number) => {
-    if(page > totalPages) handleChangePage({} as React.ChangeEvent<unknown> , 1)
+    if (page > totalPages) handleChangePage({} as React.ChangeEvent<unknown>, 1)
 
     if (areaInfo.Restaurants?.length) {
       const startIndex = (page - 1) * ITENS_PER_PAGE;
@@ -81,35 +81,39 @@ const RestaurantsPage = ({ postcode, page, handleChangePage }: RestaurantsPagePr
   const restaurantSlice = useMemo(() => getRestaurantsPerPage(page), [areaInfo.Postcode, page]);
 
   return (
-    <div style={{ marginTop: "2rem", padding: "2rem 1rem" }}>
+    <Box marginTop="2rem" padding="2rem 1rem">
       <Header area={areaInfo.Area} postcode={areaInfo.Postcode} latitude={areaInfo.Latitude} longitude={areaInfo.Longitude} />
+
       {!!(areaInfo?.Restaurants?.length) && <>
+        <Paper>
+          <Typography variant='body1' padding="0.5rem 1rem" marginBottom="1rem" display="flex" justifyContent="end">{areaInfo.Restaurants.length} Restaurants found</Typography>
+        </Paper>
         <Grid container spacing={2}
           direction="row"
           justifyContent="start"
           alignItems="stretch">
           {
             restaurantSlice.map(rest => (
-              <Grid item xs={6} md={3} key={rest.Id}>
+              <Grid item xs={12} sm={6} lg={3} key={rest.Id}>
                 <RestaurantCard restaurant={rest} />
               </Grid>))
           }
         </Grid>
-        <Pagination className='pagination' count={totalPages} page={page} onChange={handleChangePage} color="primary" showFirstButton showLastButton />
+        <Paper className='pagination'>
+          <Pagination data-cy="pagination" count={totalPages} page={page} onChange={handleChangePage} color="primary" showFirstButton showLastButton />
+        </Paper>
       </>}
       {!(areaInfo?.Restaurants?.length) && <Paper className='not-found'>
         {!Object.keys(areaInfo)?.length ? (
           <Typography variant='h6'>Use the search box to find restaurants</Typography>
         ) : (
           <>
-            <Typography variant='h6'>No Restaurants Found</Typography>
+            <Typography variant='h6' data-cy="restaurants-not-found-msg">No Restaurants Found</Typography>
             <Typography variant='body1'>Try again with another postcode</Typography>
           </>
         )}
-
-
       </Paper>}
-    </div>
+    </Box>
   )
 }
 

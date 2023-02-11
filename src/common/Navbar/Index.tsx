@@ -6,31 +6,31 @@ import Typography from '@mui/material/Typography';
 import { IconButton, InputBase, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useEffect, useState } from 'react';
-import {useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-interface NavbarProps{
-  urlOutcode:string,
+interface NavbarProps {
+  urlOutcode: string,
 }
 
-function Navbar({ urlOutcode}:NavbarProps) {
+function Navbar({ urlOutcode }: NavbarProps) {
   const navigate = useNavigate();
   const [postcode, setPostCode] = useState("")
 
-  useEffect(()=>{
-    if(urlOutcode){
+  useEffect(() => {
+    if (urlOutcode) {
       setPostCode(urlOutcode)
     }
-  },[])
+  }, [])
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPostCode(event.target.value)
   }
 
-  const navigateToCurrentPostCode = ()=>{
+  const navigateToCurrentPostCode = () => {
     navigate(`/${postcode}/page/1`)
   }
 
-  const handleKeyDown = (event:React.KeyboardEvent)=>{
+  const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault()
       navigateToCurrentPostCode()
@@ -55,6 +55,7 @@ function Navbar({ urlOutcode}:NavbarProps) {
             sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
           >
             <InputBase
+              data-cy="search-input"
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search by postcode"
               inputProps={{ 'aria-label': 'search by postcode' }}
@@ -62,7 +63,12 @@ function Navbar({ urlOutcode}:NavbarProps) {
               onChange={handleChangeSearch}
               onKeyDown={handleKeyDown}
             />
-            <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleClickSearch}>
+            <IconButton
+              data-cy="search-button"
+              type="button"
+              sx={{ p: '10px' }}
+              aria-label="search"
+              onClick={handleClickSearch}>
               <SearchIcon />
             </IconButton>
           </Paper>
